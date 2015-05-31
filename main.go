@@ -1,13 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"log"
+	"os"
 
 	"github.com/cheggaaa/pb"
+	"github.com/k0kubun/pp"
 )
 
 type failed []string
+
+var update = flag.Bool("u", false, "Update")
+
+func usage() {
+}
 
 func main() {
 	y, err := readYaml()
@@ -15,9 +22,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	flag.Usage = usage
+	flag.Parse()
+	if flag.NArg() == 0 {
+		usage()
+	}
+
 	var f failed = y.Start()
+
 	if ok := f.Check(); !ok {
-		fmt.Println("miss:", f)
+		pp.Printf("failed package(s): \n%s\n", f)
+		os.Exit(1)
 	}
 
 }
@@ -31,7 +46,6 @@ func (y *Yaml) Start() (failed []string) {
 		}
 		bar.Increment()
 	}
-	//bar.FinishPrint("")
 	bar.Finish()
 
 	return failed

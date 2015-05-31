@@ -24,7 +24,7 @@ var (
 
 func (p *Package) Get() error {
 	args := []string{"go", "get"}
-	if !p.Noupdate {
+	if !p.Noupdate && *update {
 		args = append(args, "-u")
 	}
 	if p.Noinstall {
